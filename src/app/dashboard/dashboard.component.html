@@ -1,1 +1,23 @@
-<p>dashboard works!</p>
+<div class="dashboard">
+  <h1>Dashboard</h1>
+
+  <!-- Display indicators -->
+  <div class="indicators">
+    <h2>Indicators</h2>
+    <div *ngFor="let indicator of indicators">
+      <p>{{ indicator.name }}: {{ indicator.value }}</p>
+    </div>
+  </div>
+
+  <!-- Display chart data -->
+  <div class="chart-data">
+    <h2>Chart Data</h2>
+    <p>Name: {{ chartData.name }}</p>
+    <div *ngFor="let dataPoint of chartData.data">
+      <p>{{ dataPoint.label }}: {{ dataPoint.value }}</p>
+    </div>
+  </div>
+
+  <!-- Logout button -->
+  <button mat-flat-button (click)="logout()">Logout</button>
+</div>
