@@ -34,8 +34,11 @@ export class LoginComponent {
   onSubmit() {
     this.authService.login(this.username, this.password).subscribe({
       next: (response) => {
-        localStorage.setItem('access_token', response.sessionid);
-
+        localStorage.setItem('access_token', response.access);
+        //console.log('response', response);
+        localStorage.setItem('user_email', response.email);
+        localStorage.setItem('user_name', response.name);
+        localStorage.setItem('user_profile_picture', response.profile_picture);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

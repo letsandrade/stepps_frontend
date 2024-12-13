@@ -1,23 +1,37 @@
 <div class="dashboard">
-  <h1>Dashboard</h1>
+  <header>
+    <div class="header">
+      <div class="header-logo">
+        <img src="assets/logo.svg" alt="Logo" />
+      </div>
+      <button mat-flat-button (click)="logout()">Logout</button>
+    </div>
+  </header>
 
   <!-- Display indicators -->
-  <div class="indicators">
-    <h2>Indicators</h2>
+  <div class="indicators-container">
     <div *ngFor="let indicator of indicators">
-      <p>{{ indicator.name }}: {{ indicator.value }}</p>
+      <div class="indicator">
+        <h4>{{ indicator.name }}</h4>
+        <h2>{{ indicator.value }}</h2>
+      </div>
     </div>
   </div>
 
-  <!-- Display chart data -->
-  <div class="chart-data">
-    <h2>Chart Data</h2>
-    <p>Name: {{ chartData.name }}</p>
-    <div *ngFor="let dataPoint of chartData.data">
-      <p>{{ dataPoint.label }}: {{ dataPoint.value }}</p>
-    </div>
+  <!-- Chart -->
+  <div
+    *ngIf="chartLabels.length > 0 && chartValues.length > 0"
+    class="chart-wrapper"
+  >
+    <h2>Alerts per Hour</h2>
+    <canvas
+      baseChart
+      [data]="{
+        labels: chartLabels,
+        datasets: [{ data: chartValues, label: 'Alerts' }]
+      }"
+      [options]="chartOptions"
+      [type]="'line'"
+    ></canvas>
   </div>
-
-  <!-- Logout button -->
-  <button mat-flat-button (click)="logout()">Logout</button>
 </div>

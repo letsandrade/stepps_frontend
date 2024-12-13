@@ -1,61 +1,65 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://127.0.0.1:8000/dashboard/api'; // Adjust as needed
-  private currentUserSubject: BehaviorSubject<any>;
+  private apiUrl = 'http://127.0.0.1:8000/dashboard/api/token/';
 
-  constructor(private http: HttpClient, private router: Router) {
-    this.currentUserSubject = new BehaviorSubject<any>(
-      localStorage.getItem('user') // Assuming 'user' is stored in localStorage after login
-    );
-  }
+  constructor(private http: HttpClient, private router: Router) {}
 
-  get currentUser() {
-    return this.currentUserSubject.asObservable();
-  }
-
-  // Login method with session management
   login(username: string, password: string): Observable<any> {
     return this.http
-      .post(
-        `${this.apiUrl}/login/`,
-        { username, password },
-        { withCredentials: true }
-      )
+      .post('http://127.0.0.1:8000/dashboard/api/token/', {
+        username,
+        password,
+      })
       .pipe(
         tap((response: any) => {
-          localStorage.setItem('user', JSON.stringify(response.user)); // Store user info in localStorage (optional)
-          this.currentUserSubject.next(response.user);
+          if (response.access) {
+            // console.log('jwt token:', response.access);
+            //localStorage.setItem('testing_token', response.access); // Save access token
+            localStorage.setItem('jwt_token', response.access); // Save access token
+            localStorage.setItem('refresh_token', response.refresh); // Save refresh token
+          } else {
+            console.error('Access token not provided in the response!');
+          }
         })
       );
   }
 
-  // Logout method to clear session and local storage
   logout(): void {
-    this.http
-      .post(`${this.apiUrl}/logout/`, {}, { withCredentials: true })
-      .subscribe(() => {
-        localStorage.removeItem('user');
-        this.currentUserSubject.next(null); // Clear currentUser
-        this.router.navigate(['/login']); // Redirect to login
-      });
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('refresh_token');
+    this.router.navigate(['/login']);
   }
 
-  // Check if user is authenticated based on session cookie
+  getToken(): string | null {
+    return localStorage.getItem('jwt_token');
+  }
+
+  refreshToken(): Observable<any> {
+    const refresh = localStorage.getItem('refresh_token');
+    return this.http.post(
+      'http://127.0.0.1:8000/dashboard/api/token/refresh/',
+      {
+        refresh,
+      }
+    );
+  }
+
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('user'); // Return true if user is in localStorage
+    return !!this.getToken(); // Return true if token exists
   }
 
-  // Get data for dashboard, including session-based headers
-  getDashboardData(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/`, {
-      withCredentials: true,
+  getAuthHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
     });
   }
 }

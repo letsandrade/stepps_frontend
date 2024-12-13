@@ -1,0 +1,51 @@
+.dashboard {
+  background-color: #ececec;
+  height: 100vh;
+  padding-bottom: 180px;
+}
+
+.header {
+  background-color: #283250;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.header-logo {
+  width: 120px;
+  object-fit: contain;
+}
+
+.indicators-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  margin-top: 20px;
+  height: fit-content;
+  margin-bottom: 60px;
+}
+
+.indicator {
+  background-color: whitesmoke;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(40, 50, 80, 0.3);
+  text-wrap: balance;
+  text-transform: capitalize;
+  max-width: 240px;
+  flex-grow: 1;
+  height: 100%;
+  line-height: 1;
+}
+
+h2 {
+  margin: 0;
+}
+
+.chart-wrapper {
+  background-color: whitesmoke;
+  padding: 20px;
+  max-width: 800px;
+  height: auto;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(40, 50, 80, 0.3);
+}
